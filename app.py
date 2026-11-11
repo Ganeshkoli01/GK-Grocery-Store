@@ -18,7 +18,7 @@ import streamlit as st
 # 1. Page Configuration (Must be first Streamlit command)
 st.set_page_config(
     page_title="GK GROCERY STORE – SMART BUSINESS ANALYTICS",
-    page_icon="🛒",
+    page_icon="assets/logo.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -28,6 +28,7 @@ from config import APP_NAME, APP_SUBTITLE, APP_TAGLINE, APP_VERSION
 from assets.styles import get_custom_css
 from database.db_setup import init_database, seed_sample_data
 from database.connection import fetch_one
+from utils.helpers import get_logo_base64
 from modules.authentication import (
     init_session_state,
     render_auth_page,
@@ -100,12 +101,15 @@ def main():
 
         st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
 
+        logo_uri = get_logo_base64()
+        logo_html = f'<img src="{logo_uri}" style="width: 76px; height: 76px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.25); margin: 0 auto 8px auto; display: block; border: 2px solid rgba(255,255,255,0.7);" alt="GK Logo"/>' if logo_uri else '<div style="font-size: 24px; margin-bottom: 2px;">🛒</div>'
+
         st.markdown(
             f"""
             <div class="sidebar-brand-box">
-                <div style="font-size: 24px; margin-bottom: 2px;">🛒</div>
+                {logo_html}
                 <div style="font-size: 16px; font-weight: 800; letter-spacing: -0.3px;">{t('app_title')}</div>
-                <div style="font-size: 11px; opacity: 0.85; margin-top: 2px;">{t('app_subtitle')}</div>
+                <div style="font-size: 11px; opacity: 0.9; margin-top: 2px;">{t('app_subtitle')}</div>
             </div>
             """,
             unsafe_allow_html=True

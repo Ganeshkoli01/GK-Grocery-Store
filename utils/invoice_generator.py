@@ -122,6 +122,18 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
     )
 
     # 1. Header & Store Branding
+    from config import ASSETS_DIR
+    logo_file = ASSETS_DIR / "logo.png"
+    if logo_file.exists():
+        try:
+            from reportlab.platypus import Image as RLImage
+            logo_img = RLImage(str(logo_file), width=50, height=50)
+            logo_img.hAlign = 'CENTER'
+            story.append(logo_img)
+            story.append(Spacer(1, 4))
+        except Exception:
+            pass
+
     story.append(Paragraph(f"<b>{APP_NAME}</b>", title_style))
     story.append(Spacer(1, 2))
     story.append(Paragraph(APP_SUBTITLE, subtitle_style))

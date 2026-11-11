@@ -7,7 +7,7 @@ import secrets
 from datetime import datetime, timedelta
 import streamlit as st
 from database.connection import fetch_one, execute_insert, execute_query
-from utils.helpers import hash_password, verify_password
+from utils.helpers import hash_password, verify_password, get_logo_base64
 from utils.translations import LANGUAGES, t, get_current_language
 from config import APP_NAME, APP_TAGLINE, DEFAULT_ADMIN, DEFAULT_CUSTOMER
 
@@ -211,10 +211,13 @@ def render_auth_page():
             st.session_state.language = auth_lang
             st.rerun()
 
+    logo_uri = get_logo_base64()
+    logo_html = f'<img src="{logo_uri}" style="width: 100px; height: 100px; border-radius: 50%; box-shadow: 0 8px 24px rgba(20,83,45,0.2); margin: 0 auto 12px auto; display: block; border: 3px solid #FFFFFF;" alt="GK Logo"/>' if logo_uri else '<div style="font-size: 38px;">🛒</div>'
+
     st.markdown(
         f"""
         <div style="text-align: center; margin-top: 10px; margin-bottom: 25px;">
-            <div style="font-size: 38px;">🛒</div>
+            {logo_html}
             <h1 style="color: #14532D; margin: 0; font-size: 32px; font-weight: 800;">{t('app_title')}</h1>
             <p style="color: #64748B; font-size: 15px; margin-top: 4px;">{t('app_tagline')}</p>
         </div>

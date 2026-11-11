@@ -7,8 +7,9 @@ and invoice number generators.
 import hashlib
 import secrets
 import random
+import base64
 from datetime import datetime, date, timedelta
-from config import CURRENCY
+from config import CURRENCY, ASSETS_DIR
 
 
 def hash_password(password: str, salt: str = None) -> tuple[str, str]:
@@ -118,4 +119,18 @@ def get_stock_badge(stock: float, min_stock: float) -> tuple[str, str]:
         return f"Low Stock ({stock:g} left)", "badge-warning"
     else:
         return "In Stock", "badge-success"
+
+
+def get_logo_base64() -> str:
+    """Returns base64 data URI of the store logo for HTML embedding."""
+    logo_path = ASSETS_DIR / "logo.png"
+    if logo_path.exists():
+        try:
+            with open(logo_path, "rb") as f:
+                encoded = base64.b64encode(f.read()).decode("utf-8")
+            return f"data:image/png;base64,{encoded}"
+        except Exception:
+            return ""
+    return ""
+
 
