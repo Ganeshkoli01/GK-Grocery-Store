@@ -160,6 +160,8 @@ def logout_user():
     st.session_state.full_name = None
     st.session_state.session_token = None
     st.session_state.cart = {}
+    st.session_state.pop("owner_nav_radio", None)
+    st.session_state.pop("customer_nav_radio", None)
     st.rerun()
 
 

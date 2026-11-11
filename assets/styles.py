@@ -4,14 +4,18 @@ Custom CSS designed for an elevated, clean, enterprise-ready look.
 Guarantees high-contrast readability in both light and dark system modes.
 """
 
-def get_custom_css() -> str:
-    return """
-    <style>
-    /* Google Fonts & Base Typography */
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+_CACHED_CUSTOM_CSS = None
 
+def get_custom_css() -> str:
+    global _CACHED_CUSTOM_CSS
+    if _CACHED_CUSTOM_CSS is not None:
+        return _CACHED_CUSTOM_CSS
+
+    _CACHED_CUSTOM_CSS = """
+    <style>
+    /* Modern High-Performance Typography */
     html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         color: #0F172A !important;
     }
 
@@ -371,3 +375,4 @@ def get_custom_css() -> str:
     header {visibility: hidden;}
     </style>
     """
+    return _CACHED_CUSTOM_CSS

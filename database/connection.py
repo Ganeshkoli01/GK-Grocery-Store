@@ -20,9 +20,10 @@ def get_raw_connection():
             check_same_thread=False
         )
         conn.row_factory = sqlite3.Row
-        # Enable Foreign Key support and WAL mode for better concurrency
+        # Enable Foreign Key support and high-performance WAL mode
         conn.execute("PRAGMA foreign_keys = ON;")
         conn.execute("PRAGMA journal_mode = WAL;")
+        conn.execute("PRAGMA synchronous = NORMAL;")
         return conn
     elif DB_TYPE == "mysql":
         # Ready for future MySQL deployment without touching business logic

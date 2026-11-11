@@ -50,16 +50,19 @@ from modules.powerbi_view import render_powerbi_guide
 from utils.translations import LANGUAGES, t, get_current_language, get_product_display_name
 
 
+@st.cache_resource(show_spinner=False)
 def ensure_db_ready():
-    """Checks and initializes database schema and sample data on startup."""
+    """Checks and initializes database schema and sample data once on server startup."""
     try:
         init_database()
         # If no products, seed automatically
         prod_check = fetch_one("SELECT COUNT(*) as cnt FROM products")
         if not prod_check or prod_check["cnt"] == 0:
             seed_sample_data()
+        return True
     except Exception as e:
-        st.error(f"Database initialization warning: {e}")
+        print(f"Database initialization warning: {e}")
+        return False
 
 
 # Streamlit App Execution
@@ -141,18 +144,25 @@ def main():
                 "powerbi": t("nav_powerbi")
             }
 
-            default_page = safe_get_query_param("page", "dashboard")
             page_keys = list(owner_nav_dict.keys())
-            idx = page_keys.index(default_page) if default_page in page_keys else 0
+
+            # Sync initial page selection from query params on first load
+            if "owner_nav_radio" not in st.session_state:
+                url_page = safe_get_query_param("page", "dashboard")
+                st.session_state.owner_nav_radio = url_page if url_page in page_keys else "dashboard"
+
+            def on_owner_nav_change():
+                selected = st.session_state.owner_nav_radio
+                if safe_get_query_param("page") != selected:
+                    safe_set_query_param("page", selected)
 
             nav_key = st.radio(
                 t("nav_menu_title"),
                 page_keys,
                 format_func=lambda k: owner_nav_dict[k],
-                index=idx
+                key="owner_nav_radio",
+                on_change=on_owner_nav_change
             )
-            if nav_key != default_page:
-                safe_set_query_param("page", nav_key)
 
         # CUSTOMER ROLE NAVIGATION (Only My Purchase History)
         else:
@@ -164,7 +174,7 @@ def main():
                 t("customer_menu_title"),
                 list(cust_nav_dict.keys()),
                 format_func=lambda k: cust_nav_dict[k],
-                index=0
+                key="customer_nav_radio"
             )
 
         st.markdown("<hr style='margin: 20px 0; border: none; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)

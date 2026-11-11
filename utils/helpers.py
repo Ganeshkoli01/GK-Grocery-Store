@@ -121,14 +121,22 @@ def get_stock_badge(stock: float, min_stock: float) -> tuple[str, str]:
         return "In Stock", "badge-success"
 
 
+_CACHED_LOGO_B64: str | None = None
+
+
 def get_logo_base64() -> str:
-    """Returns base64 data URI of the store logo for HTML embedding."""
+    """Returns cached base64 data URI of the store logo for instant HTML embedding."""
+    global _CACHED_LOGO_B64
+    if _CACHED_LOGO_B64 is not None:
+        return _CACHED_LOGO_B64
+
     logo_path = ASSETS_DIR / "logo.png"
     if logo_path.exists():
         try:
             with open(logo_path, "rb") as f:
                 encoded = base64.b64encode(f.read()).decode("utf-8")
-            return f"data:image/png;base64,{encoded}"
+            _CACHED_LOGO_B64 = f"data:image/png;base64,{encoded}"
+            return _CACHED_LOGO_B64
         except Exception:
             return ""
     return ""
