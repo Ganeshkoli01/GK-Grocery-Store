@@ -33,7 +33,7 @@ def render_sales_management():
     with c_f2:
         date_filter = st.selectbox(
             "Filter Timeframe",
-            ["Last 30 Days", "Today", "Yesterday", "Last 7 Days", "This Month", "This Year", "All Time", "Specific Day"]
+            ["Today", "Yesterday", "Last 7 Days", "Last 30 Days", "This Month", "This Year", "All Time", "Specific Day"]
         )
     with c_f3:
         pay_filter = st.selectbox("Payment Method", ["All Payment Methods", "Cash", "UPI", "Card", "Other"])

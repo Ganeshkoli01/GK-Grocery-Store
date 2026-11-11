@@ -56,10 +56,10 @@ def render_owner_dashboard():
     c_filter1, c_filter2, c_filter3 = st.columns([2, 1.5, 1.5])
 
     time_labels = {
-        "Last 30 Days": t("time_last_30_days"),
         "Today": t("time_today"),
         "Yesterday": t("time_yesterday"),
         "Last 7 Days": t("time_last_7_days"),
+        "Last 30 Days": t("time_last_30_days"),
         "This Month": t("time_this_month"),
         "This Year": t("time_this_year"),
         "All Time": t("time_all_time"),
