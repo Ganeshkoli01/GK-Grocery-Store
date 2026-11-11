@@ -139,7 +139,7 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
     story.append(Paragraph(APP_SUBTITLE, subtitle_style))
     story.append(Paragraph(f'"{APP_TAGLINE}"', tagline_style))
     story.append(Spacer(1, 4))
-    story.append(Paragraph("Shop No. 12, Main Market Road, Near City Center, Pune - 411001 | Phone: +91 8010434421", subtitle_style))
+    story.append(Paragraph("Main Road, Bastawad - 416106, Kolhapur | Phone: +91 8010434421", subtitle_style))
     story.append(Spacer(1, 10))
 
     story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor("#14532D"), spaceBefore=4, spaceAfter=12))

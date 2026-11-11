@@ -152,7 +152,7 @@ def init_database():
                 DEFAULT_CUSTOMER["full_name"],
                 DEFAULT_CUSTOMER["email"],
                 DEFAULT_CUSTOMER["phone"],
-                "Shop No. 12, Main Market Road, Pune, Maharashtra"
+                "Main Road, Bastawad - 416106, Kolhapur, Maharashtra"
             )
         )
 

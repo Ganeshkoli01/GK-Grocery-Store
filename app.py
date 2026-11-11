@@ -176,7 +176,7 @@ def main():
             f"""
             <div style="text-align: center; color: #94A3B8; font-size: 11px; margin-top: 15px;">
                 v{APP_VERSION} • {t('app_title')}<br>
-                Pune, Maharashtra
+                Bastawad, Kolhapur, Maharashtra
             </div>
             """,
             unsafe_allow_html=True
