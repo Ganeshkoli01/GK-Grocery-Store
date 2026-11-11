@@ -4,6 +4,7 @@ Includes secure password hashing, currency formatting, date filters,
 and invoice number generators.
 """
 
+from __future__ import annotations
 import hashlib
 import secrets
 import random
@@ -121,7 +122,7 @@ def get_stock_badge(stock: float, min_stock: float) -> tuple[str, str]:
         return "In Stock", "badge-success"
 
 
-_CACHED_LOGO_B64: str | None = None
+_CACHED_LOGO_B64 = None
 
 
 def get_logo_base64() -> str:

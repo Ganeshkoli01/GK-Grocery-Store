@@ -28,7 +28,20 @@ from config import APP_NAME, APP_SUBTITLE, APP_TAGLINE, APP_VERSION
 from assets.styles import get_custom_css
 from database.db_setup import init_database, seed_sample_data
 from database.connection import fetch_one
-from utils.helpers import get_logo_base64
+try:
+    from utils.helpers import get_logo_base64
+except Exception:
+    import base64
+    def get_logo_base64() -> str:
+        try:
+            from config import ASSETS_DIR
+            p = ASSETS_DIR / "logo.png"
+            if p.exists():
+                with open(p, "rb") as f:
+                    return f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+        except Exception:
+            pass
+        return ""
 from modules.authentication import (
     init_session_state,
     render_auth_page,

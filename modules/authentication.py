@@ -7,7 +7,21 @@ import secrets
 from datetime import datetime, timedelta
 import streamlit as st
 from database.connection import fetch_one, execute_insert, execute_query
-from utils.helpers import hash_password, verify_password, get_logo_base64
+from utils.helpers import hash_password, verify_password
+try:
+    from utils.helpers import get_logo_base64
+except Exception:
+    import base64
+    def get_logo_base64() -> str:
+        try:
+            from config import ASSETS_DIR
+            p = ASSETS_DIR / "logo.png"
+            if p.exists():
+                with open(p, "rb") as f:
+                    return f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+        except Exception:
+            pass
+        return ""
 from utils.translations import LANGUAGES, t, get_current_language
 from config import APP_NAME, APP_TAGLINE, DEFAULT_ADMIN, DEFAULT_CUSTOMER
 

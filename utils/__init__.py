@@ -5,7 +5,8 @@ from .helpers import (
     format_currency,
     generate_invoice_number,
     get_date_range,
-    get_stock_badge
+    get_stock_badge,
+    get_logo_base64
 )
 from .invoice_generator import generate_invoice_pdf
 from .excel_export import generate_full_business_excel
