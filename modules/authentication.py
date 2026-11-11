@@ -3,15 +3,100 @@ GK GROCERY STORE – Authentication & Role Management Module
 Manages secure authentication, password hashing, session states, and role separation.
 """
 
+import secrets
+from datetime import datetime, timedelta
 import streamlit as st
-from database.connection import fetch_one, execute_insert
+from database.connection import fetch_one, execute_insert, execute_query
 from utils.helpers import hash_password, verify_password
 from utils.translations import LANGUAGES, t, get_current_language
 from config import APP_NAME, APP_TAGLINE, DEFAULT_ADMIN, DEFAULT_CUSTOMER
 
 
+def safe_get_query_param(key: str, default=None):
+    """Safely retrieves query parameter even in non-browser or test context."""
+    try:
+        return st.query_params.get(key, default)
+    except Exception:
+        return default
+
+
+def safe_set_query_param(key: str, value: str):
+    """Safely sets query parameter."""
+    try:
+        st.query_params[key] = value
+    except Exception:
+        pass
+
+
+def safe_del_query_param(key: str):
+    """Safely removes query parameter."""
+    try:
+        if key in st.query_params:
+            del st.query_params[key]
+    except Exception:
+        pass
+
+
+def create_user_session(user_id: int) -> str:
+    """Generates a secure persistent session token valid for 14 days."""
+    token = secrets.token_urlsafe(32)
+    expires_at = datetime.now() + timedelta(days=14)
+    execute_insert(
+        """
+        INSERT INTO user_sessions (user_id, session_token, expires_at)
+        VALUES (?, ?, ?)
+        """,
+        (user_id, token, expires_at.strftime("%Y-%m-%d %H:%M:%S"))
+    )
+    return token
+
+
+def validate_and_restore_session(token: str) -> bool:
+    """Checks session token validity against database and restores session state."""
+    if not token or not isinstance(token, str):
+        return False
+    row = fetch_one(
+        """
+        SELECT u.id, u.username, u.full_name, u.role, s.expires_at
+        FROM user_sessions s
+        JOIN users u ON s.user_id = u.id
+        WHERE s.session_token = ?
+        """,
+        (token.strip(),)
+    )
+    if not row:
+        return False
+
+    try:
+        exp = row["expires_at"]
+        if isinstance(exp, str):
+            exp = datetime.fromisoformat(exp.replace("Z", ""))
+        if isinstance(exp, datetime) and exp < datetime.now():
+            delete_user_session(token)
+            return False
+    except Exception:
+        pass
+
+    st.session_state.authenticated = True
+    st.session_state.user_role = row["role"]
+    st.session_state.user_id = row["id"]
+    st.session_state.username = row["username"]
+    st.session_state.full_name = row["full_name"]
+    st.session_state.session_token = token
+    return True
+
+
+def delete_user_session(token: str):
+    """Removes a session token from the database."""
+    if token:
+        try:
+            execute_query("DELETE FROM user_sessions WHERE session_token = ?", (token,))
+        except Exception:
+            pass
+
+
 def init_session_state():
-    """Initializes user session state variables if not already present."""
+    """Initializes user session state variables and restores session from query params if page reloaded."""
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
     if "user_role" not in st.session_state:
@@ -22,12 +107,22 @@ def init_session_state():
         st.session_state.username = None
     if "full_name" not in st.session_state:
         st.session_state.full_name = None
+    if "session_token" not in st.session_state:
+        st.session_state.session_token = None
     if "cart" not in st.session_state:
         st.session_state.cart = {}  # {product_id: {"name": ..., "price": ..., "unit": ..., "qty": ...}}
 
+    # Auto-restore session on page reload (F5) via persistent token
+    if not st.session_state.authenticated:
+        token = safe_get_query_param("session")
+        if token:
+            success = validate_and_restore_session(token)
+            if not success:
+                safe_del_query_param("session")
+
 
 def login_user(username_attempt: str, password_attempt: str) -> bool:
-    """Verifies credentials and populates session state."""
+    """Verifies credentials, populates session state, and creates persistent session."""
     user = fetch_one(
         "SELECT id, username, password_hash, salt, full_name, role FROM users WHERE username = ?",
         (username_attempt.strip(),)
@@ -41,17 +136,29 @@ def login_user(username_attempt: str, password_attempt: str) -> bool:
         st.session_state.user_id = user["id"]
         st.session_state.username = user["username"]
         st.session_state.full_name = user["full_name"]
+
+        # Create persistent session for page reload survival
+        token = create_user_session(user["id"])
+        st.session_state.session_token = token
+        safe_set_query_param("session", token)
         return True
     return False
 
 
 def logout_user():
-    """Clears authentication session state."""
+    """Clears authentication session state and invalidates persistent session token."""
+    token = st.session_state.get("session_token") or safe_get_query_param("session")
+    if token:
+        delete_user_session(token)
+    safe_del_query_param("session")
+    safe_del_query_param("page")
+
     st.session_state.authenticated = False
     st.session_state.user_role = None
     st.session_state.user_id = None
     st.session_state.username = None
     st.session_state.full_name = None
+    st.session_state.session_token = None
     st.session_state.cart = {}
     st.rerun()
 

@@ -28,7 +28,13 @@ from config import APP_NAME, APP_SUBTITLE, APP_TAGLINE, APP_VERSION
 from assets.styles import get_custom_css
 from database.db_setup import init_database, seed_sample_data
 from database.connection import fetch_one
-from modules.authentication import init_session_state, render_auth_page, logout_user
+from modules.authentication import (
+    init_session_state,
+    render_auth_page,
+    logout_user,
+    safe_get_query_param,
+    safe_set_query_param
+)
 from modules.owner_dashboard import render_owner_dashboard
 from modules.customer_dashboard import render_customer_purchase_history
 from modules.product_management import render_product_management
@@ -131,12 +137,18 @@ def main():
                 "powerbi": t("nav_powerbi")
             }
 
+            default_page = safe_get_query_param("page", "dashboard")
+            page_keys = list(owner_nav_dict.keys())
+            idx = page_keys.index(default_page) if default_page in page_keys else 0
+
             nav_key = st.radio(
                 t("nav_menu_title"),
-                list(owner_nav_dict.keys()),
+                page_keys,
                 format_func=lambda k: owner_nav_dict[k],
-                index=0
+                index=idx
             )
+            if nav_key != default_page:
+                safe_set_query_param("page", nav_key)
 
         # CUSTOMER ROLE NAVIGATION (Only My Purchase History)
         else:
