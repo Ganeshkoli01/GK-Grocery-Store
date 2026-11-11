@@ -251,7 +251,7 @@ def render_auth_page():
             st.markdown("##### New Customer Account")
             with st.form("register_form"):
                 reg_name = st.text_input("Full Name *", placeholder="e.g. Vikram Sharma")
-                reg_phone = st.text_input("Mobile Number *", placeholder="e.g. +91 98765 43210")
+                reg_phone = st.text_input("Mobile Number *", placeholder="e.g. +91 8010434421")
                 reg_email = st.text_input("Email Address", placeholder="e.g. vikram@example.com")
                 reg_user = st.text_input("Choose Username *", placeholder="e.g. vikram24")
                 reg_pass = st.text_input("Choose Password *", type="password", placeholder="Minimum 6 characters")

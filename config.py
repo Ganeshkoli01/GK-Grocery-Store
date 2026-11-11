@@ -105,7 +105,7 @@ DEFAULT_ADMIN = {
     "password": "Ganeshk@825",
     "full_name": "Ganesh Koli (Store Owner)",
     "email": "owner@gkgrocery.com",
-    "phone": "+91 98765 43210",
+    "phone": "+91 8010434421",
     "role": "owner"
 }
 

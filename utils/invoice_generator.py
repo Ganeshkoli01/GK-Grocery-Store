@@ -139,7 +139,7 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
     story.append(Paragraph(APP_SUBTITLE, subtitle_style))
     story.append(Paragraph(f'"{APP_TAGLINE}"', tagline_style))
     story.append(Spacer(1, 4))
-    story.append(Paragraph("Shop No. 12, Main Market Road, Near City Center, Pune - 411001 | Phone: +91 98765 43210", subtitle_style))
+    story.append(Paragraph("Shop No. 12, Main Market Road, Near City Center, Pune - 411001 | Phone: +91 8010434421", subtitle_style))
     story.append(Spacer(1, 10))
 
     story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor("#14532D"), spaceBefore=4, spaceAfter=12))
@@ -207,8 +207,8 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
 
         table_rows.append([
             str(idx),
-            item_name,
-            cat,
+            Paragraph(item_name, body_style),
+            Paragraph(cat, body_style),
             f"{rate:,.2f}",
             qty_display,
             f"{subtotal:,.2f}"
@@ -216,7 +216,7 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
 
     items_table = Table(
         table_rows,
-        colWidths=[30, 210, 110, 60, 50, 65]
+        colWidths=[25, 175, 95, 65, 85, 78]
     )
 
     items_table.setStyle(TableStyle([
@@ -225,7 +225,10 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, 0), 9),
         ('ALIGN', (0, 0), (0, -1), 'CENTER'),
-        ('ALIGN', (3, 0), (-1, -1), 'RIGHT'),
+        ('ALIGN', (1, 0), (2, -1), 'LEFT'),
+        ('ALIGN', (3, 0), (3, -1), 'RIGHT'),
+        ('ALIGN', (4, 0), (4, -1), 'CENTER'),
+        ('ALIGN', (5, 0), (5, -1), 'RIGHT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
         ('TOPPADDING', (0, 0), (-1, -1), 5),
@@ -247,7 +250,7 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
         [Paragraph("", body_style), Paragraph("<b>Grand Total:</b>", right_bold), Paragraph(f"<b>Rs. {grand_total:,.2f}</b>", right_bold)],
     ]
 
-    summary_table = Table(summary_data, colWidths=[280, 120, 125])
+    summary_table = Table(summary_data, colWidths=[270, 125, 128])
     summary_table.setStyle(TableStyle([
         ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
         ('LINEABOVE', (1, 2), (2, 2), 1, colors.HexColor("#14532D")),
@@ -270,7 +273,7 @@ def generate_invoice_pdf(sale_data: dict, items: list[dict]) -> io.BytesIO:
         textColor=colors.HexColor("#14532D")
     )))
     story.append(Spacer(1, 3))
-    story.append(Paragraph("For support or inquiries, please contact info@gkgrocery.com | +91 98765 43210", footer_style))
+    story.append(Paragraph("For support or inquiries, please contact info@gkgrocery.com | +91 8010434421", footer_style))
     story.append(Paragraph("Goods once sold can be exchanged within 24 hours with this original tax invoice.", footer_style))
 
     # Build document
