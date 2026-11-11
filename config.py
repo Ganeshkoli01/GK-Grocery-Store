@@ -101,8 +101,8 @@ EXPENSE_CATEGORIES = [
 
 # Default Admin Setup
 DEFAULT_ADMIN = {
-    "username": "admin",
-    "password": "admin123",  # Hash will be generated automatically
+    "username": "ganesh_01",
+    "password": "Ganeshk@825",
     "full_name": "Ganesh Koli (Store Owner)",
     "email": "owner@gkgrocery.com",
     "phone": "+91 98765 43210",

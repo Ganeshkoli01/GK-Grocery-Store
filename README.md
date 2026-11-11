@@ -157,7 +157,7 @@ Open your browser at `http://localhost:8501`.
 
 | Role | Username | Password | Purpose |
 |---|---|---|---|
-| **Store Owner (Admin)** | `admin` | `admin123` | Full store management, P&L, inventory, analytics, pricing |
+| **Store Owner (Admin)** | `ganesh_01` | `Ganeshk@825` | Full store management, P&L, inventory, analytics, pricing |
 | **Customer** | `customer` | `customer123` | Product browsing, shopping cart, checkout, invoice downloads |
 
 > **Note:** For quick testing and evaluation during interviews, the login page also includes a **"⚡ One-Click Demo Access"** tab that lets you log in with either role in a single click!
